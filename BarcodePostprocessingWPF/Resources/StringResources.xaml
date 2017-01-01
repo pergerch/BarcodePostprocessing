@@ -1,0 +1,26 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:BarcodePostprocessingWPF.Resources"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <system:String x:Key="Heading1">1) Sum files from Barcode Scanner</system:String>
+    <system:String x:Key="Heading2">2) Compare summed Barcode results with Official Stock</system:String>
+    <system:String x:Key="Heading3">3) Sum the compared files</system:String>
+    
+    <system:String x:Key="SubHeading1">Select Excel files to sum:</system:String>
+    <system:String x:Key="SubHeading2">Select summed and official stock Excel files:</system:String>
+    <system:String x:Key="SubHeading3">Select Excel files to sum:</system:String>
+
+    <system:String x:Key="Skip">Skip first row (heading)</system:String>
+    <system:String x:Key="Barcode">Barcode:</system:String>
+    <system:String x:Key="Count">Count:</system:String>
+    <system:String x:Key="Price">Price:</system:String>
+
+    <system:String x:Key="AddRawButton">Add raw data files...</system:String>
+    <system:String x:Key="SumRawButton">Sum files and save as...</system:String>
+    <system:String x:Key="SelectSumButton">Select sum file...</system:String>
+    <system:String x:Key="SelectOfficialButton">Select stock file...</system:String> 
+    <system:String x:Key="CompareFilesButton">Compare files and save as...</system:String>
+    <system:String x:Key="AddComparedFilesButton">Add compared files...</system:String>
+    <system:String x:Key="SumComparedFilesButton">Sum files and save as...</system:String>
+</ResourceDictionary>

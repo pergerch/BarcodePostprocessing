@@ -1,103 +1,191 @@
 ﻿<Window x:Class="BarcodePostprocessingWPF.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:BarcodePostprocessingWPF"
-        mc:Ignorable="d"
-        Title="Barcode Postprocessing" Height="760" Width="525"
-		ResizeMode="NoResize" WindowStyle="ThreeDBorderWindow" Icon="barcode.ico">
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Barcode Postprocessing v0.1" Height="830" Width="550"
+    ResizeMode="NoResize" WindowStyle="ThreeDBorderWindow" Icon="barcode.ico">
     <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <StackPanel VerticalAlignment="Stretch">
-            <Label Margin="10,10,10,10" FontSize="14">1) Sum files from Barcode Scanner</Label>
-            <Label Margin="10,0,10,0" Content="Select Excel files to sum:" />
-            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,10,10,10"  >
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,10,10,10">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="30"></ColumnDefinition>
+                    <ColumnDefinition Width="30"></ColumnDefinition>
+                    <ColumnDefinition Width="30"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <ListBox Grid.Column="0" Height="80" Margin="0,0,10,0"></ListBox>
-                <Button HorizontalAlignment="Stretch" Grid.Column="1" Height="36" VerticalAlignment="top" Name="BtnAddRawDataFiles" Click="BtnAddRawDataFiles_OnClick">
-                    Add raw data files...
-                </Button>
+                <Label Grid.Column="0" FontSize="14" Content="{DynamicResource Heading1}"></Label>
+                <Button Grid.Column="1" Name="LanguageEnglishButton" Content="EN" Click="LanguageEnglishButton_OnClick" />
+                <Button Grid.Column="2" Name="LanguageBulgarianButton" Content="BG" Click="LanguageBulgarianButton_OnClick" />
+                <Button Grid.Column="3" Name="LanguageGermanButton" Content="DE" Click="LanguageGermanButton_OnClick" />
             </Grid>
-            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,0,10,10"  >
+            <Label Margin="10,0,10,0" Content="{DynamicResource SubHeading1}" />
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,10,10,10">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="5*" />
+                    <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
-                <Button HorizontalAlignment="Stretch" Grid.Column="1" Height="36" Name="BtnSumFiles" Click="BtnSumFiles_OnClick">
-                    Sum files and save as...
-                </Button>
+                <ListBox Grid.Column="0" Height="80" Margin="0,0,10,0" ItemsSource="{Binding RawFiles}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <Button HorizontalAlignment="Stretch" Grid.Column="1" Height="36" VerticalAlignment="top"
+                    Name="BtnAddRawDataFiles" Click="BtnAddRawDataFiles_OnClick" Content="{DynamicResource AddRawButton}" />
             </Grid>
-
-            <Border BorderBrush="Tomato" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,10,10,10" VerticalAlignment="Stretch"/>
-
-            <Label Margin="10,10,10,10" FontSize="14">2) Compare summed Barcode results with Official Stock</Label>
-            <Label Margin="10,0,10,0" Content="Select summed and official stock Excel files:" />
-            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,10,10,10"  >
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,0,10,10">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBox Margin="0,0,10,10" Grid.Column="0" Grid.Row="0" />
-                <Button HorizontalAlignment="Stretch" Margin="0,0,0,10" Grid.Column="1" Grid.Row="0">
-                    Select sum file...
-                </Button>
-                <TextBox Margin="0,0,10,0" Grid.Column="0" Grid.Row="1" />
-                <Button HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="1">
-                    Select stock file...
-                </Button>
-            </Grid>
-            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,10,10,10"  >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <Button HorizontalAlignment="Stretch" Grid.Column="1" Height="36" Name="BtnCompareFiles" Click="BtnCompareFiles_OnClick">
-                    Compare files and save as...
-                </Button>
+                <CheckBox Grid.Column="1" Grid.Row="0" Content="{DynamicResource Skip}" Name="RawFileSkipHeaderCheckbox"></CheckBox>
+                <Label Grid.Column="0" Grid.Row="1" Content="{DynamicResource Barcode}"></Label>
+                <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding RawFileColumns}"
+                    Name="RawBarcodeColumnBox">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock>Col &#160;</TextBlock>
+                                <TextBlock Text="{Binding Path=Key}" Width="25" />
+                                <TextBlock Text="{Binding Path=Value}" FontStyle="Italic" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Label Grid.Column="0" Grid.Row="2" Content="{DynamicResource Count}"></Label>
+                <ComboBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding RawFileColumns}" Name="RawCoundColumnBox">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock>Col &#160;</TextBlock>
+                                <TextBlock Text="{Binding Path=Key}" Width="25" />
+                                <TextBlock Text="{Binding Path=Value}" FontStyle="Italic" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button HorizontalAlignment="Stretch" Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" Name="BtnSumFiles"
+                    Click="BtnSumFiles_OnClick" Margin="10,0,0,0" Content="{DynamicResource SumRawButton}" />
             </Grid>
 
-            <Border BorderBrush="Tomato" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,10,10,10" VerticalAlignment="Stretch"/>
+            <Border BorderBrush="Tomato" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,10,10,10"
+                VerticalAlignment="Stretch" />
 
-            <Label Margin="10,10,10,10" FontSize="14">3) Sum the compared files</Label>
-            <Label Margin="10,0,10,0" Content="Select Excel files to sum:" />
-            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,10,10,10"  >
+            <Label Margin="10,10,10,10" FontSize="14" Content="{DynamicResource Heading2}"></Label>
+            <Label Margin="10,0,10,0" Content="{DynamicResource SubHeading2}" />
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,10,10,10">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="5*" />
+                    <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
-                <ListBox Grid.Column="0" Height="80" Margin="0,0,10,0"></ListBox>
-                <Button HorizontalAlignment="Stretch" Grid.Column="1" Height="36" VerticalAlignment="top">
-                    Add compared files...
-                </Button>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <TextBox Margin="0,0,10,10" Grid.Column="0" Grid.Row="0" Name="RawSummedFileText" Text="{Binding RawSummedFileName}" />
+                <Button HorizontalAlignment="Stretch" Margin="0,0,0,10" Grid.Column="1" Grid.Row="0" Name="RawSummedFileButton" Click="RawSummedFileButton_OnClick" Content="{DynamicResource SelectSumButton}" />
+                    <TextBox Margin="0,0,10,0" Grid.Column="0" Grid.Row="1" Name="OfficialFileText" Text="{Binding OfficialFileName}" />
+                <Button HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="1" Name="OfficialFileButton" Click="OfficialFileButton_OnClick" Content="{DynamicResource SelectOfficialButton}" />
             </Grid>
-            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,0,10,10"  >
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,10,10,10">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button HorizontalAlignment="Stretch" Grid.Column="1" Height="36">
-                    Sum files and save as...
-                </Button>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <CheckBox Grid.Column="1" Grid.Row="0" Content="{DynamicResource Skip}" Name="OfficialFileSkipHeaderCheckbox"></CheckBox>
+                <Label Grid.Column="0" Grid.Row="1" Content="{DynamicResource Barcode}"></Label>
+                <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding OfficialFileColumns}" Name="OfficialBarcodeColumnBox">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock>Col &#160;</TextBlock>
+                                <TextBlock Text="{Binding Path=Key}" Width="25" />
+                                <TextBlock Text="{Binding Path=Value}" FontStyle="Italic" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Label Grid.Column="0" Grid.Row="2" Content="{DynamicResource Count}"></Label>
+                <ComboBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding OfficialFileColumns}" Name="OfficialCountColumnBox">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock>Col &#160;</TextBlock>
+                                <TextBlock Text="{Binding Path=Key}" Width="25" />
+                                <TextBlock Text="{Binding Path=Value}" FontStyle="Italic" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Label Grid.Column="0" Grid.Row="3" Content="{DynamicResource Price}"></Label>
+                <ComboBox Grid.Column="1" Grid.Row="3" ItemsSource="{Binding OfficialFileColumns}" Name="OfficialPriceColumnBox">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock>Col &#160;</TextBlock>
+                                <TextBlock Text="{Binding Path=Key}" Width="25" />
+                                <TextBlock Text="{Binding Path=Value}" FontStyle="Italic" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button HorizontalAlignment="Stretch" Grid.Column="2" Grid.Row="0" Grid.RowSpan="4" Name="BtnCompareFiles"
+                    Click="BtnCompareFiles_OnClick" Margin="10,0,0,0" Content="{DynamicResource CompareFilesButton}" />
+            </Grid>
+
+            <Border BorderBrush="Tomato" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,10,10,10"
+                VerticalAlignment="Stretch" />
+
+            <Label Margin="10,10,10,10" FontSize="14" Content="{DynamicResource Heading3}"></Label>
+            <Label Margin="10,0,10,0" Content="{DynamicResource Subheading3}" />
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,10,10,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ListBox Grid.Column="0" Height="80" Margin="0,0,10,0" />
+                <Button HorizontalAlignment="Stretch" Grid.Column="1" Height="36" VerticalAlignment="top" Content="{DynamicResource AddComparedFilesButton}" Name="BtnAddComparedDataFiles" Click="BtnAddComparedDataFiles_OnClick" />
+            </Grid>
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,0,10,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button HorizontalAlignment="Stretch" Grid.Column="1" Height="36" Content="{DynamicResource SumComparedFilesButton}" />
             </Grid>
 
             <StatusBar DockPanel.Dock="Bottom" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                 <StatusBarItem HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                     <Grid HorizontalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Label Name="StatusBarText0" Grid.Column="0" HorizontalAlignment="Stretch">Ready</Label>
-                        <Label Name="StatusBarText1" Grid.Column="1" HorizontalAlignment="Stretch"></Label>
-                        <Label Grid.Column="2" HorizontalAlignment="Right" Name="StatusButtonCopyright" MouseDoubleClick="StatusButtonCopyright_OnMouseDoubleClick" Foreground="#FF0000FD">(c) Christoph, 2016</Label>
+                        <Label Name="StatusBarText1" Grid.Column="1" HorizontalAlignment="Stretch" />
+                        <Label Grid.Column="2" HorizontalAlignment="Right" Name="StatusButtonCopyright"
+                            MouseDoubleClick="StatusButtonCopyright_OnMouseDoubleClick" Foreground="#FF0000FD">
+                            (c) Christoph, 2017
+                        </Label>
                     </Grid>
                 </StatusBarItem>
             </StatusBar>
