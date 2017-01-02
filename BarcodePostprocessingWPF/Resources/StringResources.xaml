@@ -14,7 +14,7 @@
     <system:String x:Key="Barcode">Barcode:</system:String>
     <system:String x:Key="Count">Count:</system:String>
     <system:String x:Key="Price">Price:</system:String>
-    <system:String x:Key="NewBarcode">New Barcode:</system:String>
+    <system:String x:Key="NewBarcode">2nd Barcode:</system:String>
 
     <system:String x:Key="AddRawButton">Add raw data files...</system:String>
     <system:String x:Key="SumRawButton">Sum files and save as...</system:String>

@@ -40,7 +40,7 @@
             </Grid>
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,0,10,10">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="90" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
@@ -100,7 +100,7 @@
             </Grid>
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,10,10,10">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="90" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
@@ -174,7 +174,7 @@
             </Grid>
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,10,10,10">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="90" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
