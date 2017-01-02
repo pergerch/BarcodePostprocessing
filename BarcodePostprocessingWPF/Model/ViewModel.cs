@@ -9,15 +9,18 @@
     {
         public ViewModel()
         {
+            ComparedFiles = new ObservableCollection<string>();
+            ComparedFileColumns = new ObservableCollection<KeyValuePair<int, string>>();
+            OfficialFileColumns = new ObservableCollection<KeyValuePair<int, string>>();
             RawFiles = new ObservableCollection<string>();
             RawFileColumns = new ObservableCollection<KeyValuePair<int, string>>();
-            OfficialFileColumns = new ObservableCollection<KeyValuePair<int, string>>();
         }
+
+        public ObservableCollection<KeyValuePair<int, string>> ComparedFileColumns { get; set; }
 
         public ObservableCollection<string> ComparedFiles { get; set; }
 
         public ObservableCollection<KeyValuePair<int, string>> OfficialFileColumns { get; set; }
-        public ObservableCollection<KeyValuePair<int, string>> ComparedFileColumns { get; set; }
 
         public string OfficialFileName { get; set; }
 

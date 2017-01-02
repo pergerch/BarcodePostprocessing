@@ -27,11 +27,7 @@
 
         private void BtnAddComparedDataFiles_OnClick(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openDialog = new OpenFileDialog
-            {
-                Multiselect = true,
-                Filter = "Excel file|*.xlsx|All files|*.*"
-            };
+            OpenFileDialog openDialog = new OpenFileDialog { Multiselect = true, Filter = "Excel file|*.xlsx" };
 
             if (openDialog.ShowDialog() == true)
             {
@@ -40,7 +36,8 @@
                     this.viewModel.ComparedFiles.Add(fileName);
                 }
 
-                Dictionary<int, string> columns = ExcelHelper.ReadFirstRowFromExcelFile(this.viewModel.ComparedFiles.First());
+                Dictionary<int, string> columns =
+                    ExcelHelper.ReadFirstRowFromExcelFile(this.viewModel.ComparedFiles.First());
                 this.viewModel.ComparedFileColumns.Clear();
                 foreach (KeyValuePair<int, string> column in columns)
                 {
@@ -51,11 +48,7 @@
 
         private void BtnAddRawDataFiles_OnClick(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openDialog = new OpenFileDialog
-            {
-                Multiselect = true,
-                Filter = "Excel file|*.xlsx|All files|*.*"
-            };
+            OpenFileDialog openDialog = new OpenFileDialog { Multiselect = true, Filter = "Excel file|*.xlsx" };
 
             if (openDialog.ShowDialog() == true)
             {
@@ -88,7 +81,7 @@
             if (saveDialog.ShowDialog() == true)
             {
                 fileName = saveDialog.FileName;
-                File.Copy(this.viewModel.OfficialFileName, fileName);
+                File.Copy(this.viewModel.OfficialFileName, fileName, true);
             }
             else
             {
@@ -104,8 +97,47 @@
             ExcelHelper.CompareSumWithOfficial(fileName, stock, barcodeColumn, countColumn, priceColumn,
                 this.OfficialFileSkipHeaderCheckbox.IsChecked);
 
-            MessageBox.Show("Comparison done and stored.", "Comparison successful", MessageBoxButton.OK,
-                MessageBoxImage.Information);
+            MessageBox.Show(FindResource("ComparisonDoneText").ToString(),
+                FindResource("ComparisonDoneCaption").ToString(), MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void BtnSumCompareFiles_OnClick(object sender, RoutedEventArgs e)
+        {
+            List<ExcelRowToCompare> allItems = new List<ExcelRowToCompare>();
+            string fileName;
+
+            if (this.viewModel.ComparedFiles.Count <= 0)
+            {
+                MessageBox.Show(FindResource("InputMissingText").ToString(),
+                    FindResource("InputMissingCaption").ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            SaveFileDialog saveDialog = new SaveFileDialog { Filter = "Excel file|*.xlsx" };
+            if (saveDialog.ShowDialog() == true)
+            {
+                fileName = saveDialog.FileName;
+            }
+            else
+            {
+                return;
+            }
+
+            int barcodeColumn = ((KeyValuePair<int, string>)this.CompareBarcodeColumnBox.SelectionBoxItem).Key;
+
+            foreach (string item in this.viewModel.ComparedFiles)
+            {
+                allItems.AddRange(ExcelHelper.ReadRowsFromExcelFile(item, barcodeColumn,
+                    this.CompareFileSkipHeaderCheckbox.IsChecked));
+            }
+
+            if (allItems.Count > 0)
+            {
+                ExcelHelper.WriteComparedSumsToExcelFile(fileName, allItems, "Summed");
+
+                MessageBox.Show(FindResource("SumDoneCaption").ToString(), FindResource("SumDoneText").ToString(),
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
 
         private void BtnSumFiles_OnClick(object sender, RoutedEventArgs e)
@@ -115,8 +147,8 @@
 
             if (this.viewModel.RawFiles.Count <= 0)
             {
-                MessageBox.Show("Please select the input files first.", "Input missing", MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBox.Show(FindResource("InputMissingText").ToString(),
+                    FindResource("InputMissingCaption").ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -145,8 +177,8 @@
                 IOrderedEnumerable<KeyValuePair<string, int>> result = stock.OrderBy(x => x.Key);
                 ExcelHelper.WriteCollectionToExcelFile(fileName, result, "Summed");
 
-                MessageBox.Show("Merging done and stored.", "Merging successful", MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                MessageBox.Show(FindResource("SumDoneCaption").ToString(), FindResource("SumDoneText").ToString(),
+                    MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -167,11 +199,7 @@
 
         private void OfficialFileButton_OnClick(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openDialog = new OpenFileDialog
-            {
-                Multiselect = true,
-                Filter = "Excel file|*.xlsx|All files|*.*"
-            };
+            OpenFileDialog openDialog = new OpenFileDialog { Multiselect = true, Filter = "Excel file|*.xlsx" };
 
             if (openDialog.ShowDialog() == true)
             {
@@ -188,11 +216,7 @@
 
         private void RawSummedFileButton_OnClick(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openDialog = new OpenFileDialog
-            {
-                Multiselect = true,
-                Filter = "Excel file|*.xlsx|All files|*.*"
-            };
+            OpenFileDialog openDialog = new OpenFileDialog { Multiselect = true, Filter = "Excel file|*.xlsx" };
 
             if (openDialog.ShowDialog() == true)
             {
