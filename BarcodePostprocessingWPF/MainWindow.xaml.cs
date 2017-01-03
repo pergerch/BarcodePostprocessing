@@ -39,7 +39,7 @@
                 Dictionary<int, string> columns =
                     ExcelHelper.ReadFirstRowFromExcelFile(this.viewModel.ComparedFiles.First());
                 this.viewModel.ComparedFileColumns.Clear();
-                foreach (KeyValuePair<int, string> column in columns)
+                foreach (KeyValuePair<int, string> column in columns ?? new Dictionary<int, string>())
                 {
                     this.viewModel.ComparedFileColumns.Add(column);
                 }
@@ -59,7 +59,7 @@
 
                 Dictionary<int, string> columns = ExcelHelper.ReadFirstRowFromExcelFile(this.viewModel.RawFiles.First());
                 this.viewModel.RawFileColumns.Clear();
-                foreach (KeyValuePair<int, string> column in columns)
+                foreach (KeyValuePair<int, string> column in columns ?? new Dictionary<int, string>())
                 {
                     this.viewModel.RawFileColumns.Add(column);
                 }
@@ -207,7 +207,7 @@
 
                 Dictionary<int, string> columns = ExcelHelper.ReadFirstRowFromExcelFile(this.viewModel.OfficialFileName);
                 this.viewModel.OfficialFileColumns.Clear();
-                foreach (KeyValuePair<int, string> column in columns)
+                foreach (KeyValuePair<int, string> column in columns ?? new Dictionary<int, string>())
                 {
                     this.viewModel.OfficialFileColumns.Add(column);
                 }

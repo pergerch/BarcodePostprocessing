@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Windows;
     using BarcodePostprocessingWPF.Model;
+    using Microsoft.HockeyApp;
     using OfficeOpenXml;
     using OfficeOpenXml.Style;
 
@@ -85,10 +86,11 @@
 
                 package.Save();
             }
-            catch (IOException)
+            catch (IOException ex)
             {
                 MessageBox.Show("Cannot access file: " + filename, "IO Exception", MessageBoxButton.OK,
                     MessageBoxImage.Error);
+                ((HockeyClient)HockeyClient.Current).HandleException(ex);
             }
         }
 
@@ -122,10 +124,11 @@
 
                 return stock;
             }
-            catch (IOException)
+            catch (IOException ex)
             {
                 MessageBox.Show("Cannot access file: " + filename, "IO Exception", MessageBoxButton.OK,
                     MessageBoxImage.Error);
+                ((HockeyClient)HockeyClient.Current).HandleException(ex);
                 return null;
             }
         }
@@ -146,10 +149,11 @@
 
                 return values;
             }
-            catch (IOException)
+            catch (IOException ex)
             {
                 MessageBox.Show("Cannot access file: " + filename, "IO Exception", MessageBoxButton.OK,
                     MessageBoxImage.Error);
+                ((HockeyClient)HockeyClient.Current).HandleException(ex);
                 return null;
             }
         }
@@ -183,10 +187,11 @@
 
                 return rows;
             }
-            catch (IOException)
+            catch (IOException ex)
             {
                 MessageBox.Show("Cannot access file: " + filename, "IO Exception", MessageBoxButton.OK,
                     MessageBoxImage.Error);
+                ((HockeyClient)HockeyClient.Current).HandleException(ex);
                 return null;
             }
         }
@@ -207,10 +212,11 @@
 
                 package.Save();
             }
-            catch (IOException)
+            catch (IOException ex)
             {
                 MessageBox.Show("Cannot access file: " + filename, "IO Exception", MessageBoxButton.OK,
                     MessageBoxImage.Error);
+                ((HockeyClient)HockeyClient.Current).HandleException(ex);
             }
         }
 
@@ -263,10 +269,11 @@
 
                 package.Save();
             }
-            catch (IOException)
+            catch (IOException ex)
             {
                 MessageBox.Show("Cannot access file: " + filename, "IO Exception", MessageBoxButton.OK,
                     MessageBoxImage.Error);
+                ((HockeyClient)HockeyClient.Current).HandleException(ex);
             }
         }
     }
