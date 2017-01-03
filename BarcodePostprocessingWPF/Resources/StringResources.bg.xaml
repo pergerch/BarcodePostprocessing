@@ -1,5 +1,36 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:system="clr-namespace:System;assembly=mscorlib">
+    
+    <system:String x:Key="Heading1">1) Сумиране на файловете от устройствата</system:String>
+    <system:String x:Key="Heading2">2) Сравняване на сумираните резултати от устройствата с официалната наличност</system:String>
+    <system:String x:Key="Heading3">3) Сумиране на сравнените файлове</system:String>
+
+    <system:String x:Key="SubHeading1">Селектирайте Ексел файлове за сумиране:</system:String>
+    <system:String x:Key="SubHeading2">Селектирайте сумираните и за официалната наличност файлове:</system:String>
+    <system:String x:Key="SubHeading3">Селектирайте Ексел файлове за сумиране:</system:String>
+
+    <system:String x:Key="Skip">Прескочи първия ред (заглавие)</system:String>
+    <system:String x:Key="Barcode">Баркод:</system:String>
+    <system:String x:Key="Count">Бройка:</system:String>
+    <system:String x:Key="Price">Цена:</system:String>
+    <system:String x:Key="NewBarcode">2ри баркод:</system:String>
+
+    <system:String x:Key="AddRawButton">Добавете сурови данни...</system:String>
+    <system:String x:Key="SumRawButton">Сумирай файловете и запази като...</system:String>
+    <system:String x:Key="SelectSumButton">Селектирайте сумираните файлове...</system:String>
+    <system:String x:Key="SelectOfficialButton">Селектирайте файла за наличност...</system:String>
+    <system:String x:Key="CompareFilesButton">Сравни файловете и запази като...</system:String>
+    <system:String x:Key="AddComparedFilesButton">Добави сравнените файлове...</system:String>
+    <system:String x:Key="SumComparedFilesButton">Сумирай файловете и запази като...</system:String>
+
+    <system:String x:Key="SumDoneCaption">Сумирането успешно</system:String>
+    <system:String x:Key="SumDoneText">Сумирането приключено и запазено.</system:String>
+    <system:String x:Key="ComparisonDoneCaption">Сравнението успешно</system:String>
+    <system:String x:Key="ComparisonDoneText">Сравнението приключено и запазено.</system:String>
+    <system:String x:Key="SumCompareDoneCaption">Сумирането успешно</system:String>
+    <system:String x:Key="SumCompareDoneText">Сумирането приключено и запазено.</system:String>
+    <system:String x:Key="InputMissingCaption">Липсват входни данни</system:String>
+    <system:String x:Key="InputMissingText">Моля първо селектирайте входни данни.</system:String>
 
 </ResourceDictionary>
