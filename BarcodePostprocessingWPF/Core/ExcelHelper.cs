@@ -26,8 +26,13 @@
 
                 for (int i = firstRow; i <= workSheet.Dimension.End.Row; i++)
                 {
+                    if (workSheet.Cells[i, barcodeColumn].Value==null)
+                    {
+                        continue;
+                    }
+
                     string barcode = workSheet.Cells[i, barcodeColumn].Value.ToString().Trim();
-                    int num = int.Parse(workSheet.Cells[i, numColumn].Value.ToString());
+                    int num = (int) double.Parse(workSheet.Cells[i, numColumn].Value.ToString());
                     double price = double.Parse(workSheet.Cells[i, priceColumn].Value.ToString());
 
                     int current = 0;
