@@ -9,6 +9,7 @@
     using System.Windows.Input;
     using BarcodePostprocessingWPF.Core;
     using BarcodePostprocessingWPF.Model;
+    using BarcodePostprocessingWPF.Repository;
     using Microsoft.Win32;
 
     /// <summary>
@@ -36,10 +37,10 @@
                     this.viewModel.ComparedFiles.Add(fileName);
                 }
 
-                Dictionary<int, string> columns =
+                Dictionary<string, string> columns =
                     ExcelHelper.ReadFirstRowFromExcelFile(this.viewModel.ComparedFiles.First());
                 this.viewModel.ComparedFileColumns.Clear();
-                foreach (KeyValuePair<int, string> column in columns ?? new Dictionary<int, string>())
+                foreach (KeyValuePair<string, string> column in columns ?? new Dictionary<string, string>())
                 {
                     this.viewModel.ComparedFileColumns.Add(column);
                 }
@@ -57,9 +58,9 @@
                     this.viewModel.RawFiles.Add(fileName);
                 }
 
-                Dictionary<int, string> columns = ExcelHelper.ReadFirstRowFromExcelFile(this.viewModel.RawFiles.First());
+                Dictionary<string, string> columns = ExcelHelper.ReadFirstRowFromExcelFile(this.viewModel.RawFiles.First());
                 this.viewModel.RawFileColumns.Clear();
-                foreach (KeyValuePair<int, string> column in columns ?? new Dictionary<int, string>())
+                foreach (KeyValuePair<string, string> column in columns ?? new Dictionary<string, string>())
                 {
                     this.viewModel.RawFileColumns.Add(column);
                 }
@@ -88,14 +89,14 @@
                 return;
             }
 
-            Dictionary<string, int> stock = ExcelHelper.ReadBarcodeAndCountFromExcelFile(new Dictionary<string, int>(),
-                this.viewModel.RawSummedFileName, 1, 2);
-            int barcodeColumn = ((KeyValuePair<int, string>)this.OfficialBarcodeColumnBox.SelectionBoxItem).Key;
-            int countColumn = ((KeyValuePair<int, string>)this.OfficialCountColumnBox.SelectionBoxItem).Key;
-            int priceColumn = ((KeyValuePair<int, string>)this.OfficialPriceColumnBox.SelectionBoxItem).Key;
+            Inventory inventory = ExcelHelper.ReadBarcodeAndCountFromExcelFile(new Inventory(), 
+                this.viewModel.RawSummedFileName, 1, 2, 3);
+            int barcodeColumn = Helper.NumberFromExcelColumn(((KeyValuePair<string, string>)this.OfficialBarcodeColumnBox.SelectionBoxItem).Key);
+            int countColumn = Helper.NumberFromExcelColumn(((KeyValuePair<string, string>)this.OfficialCountColumnBox.SelectionBoxItem).Key);
+            int priceColumn = Helper.NumberFromExcelColumn(((KeyValuePair<string, string>)this.OfficialPriceColumnBox.SelectionBoxItem).Key);
 
-            ExcelHelper.CompareSumWithOfficial(fileName, stock, barcodeColumn, countColumn, priceColumn,
-                this.OfficialFileSkipHeaderCheckbox.IsChecked);
+            //ExcelHelper.CompareSumWithOfficial(fileName, inventory, barcodeColumn, countColumn, priceColumn,
+            //    this.OfficialFileSkipHeaderCheckbox.IsChecked);
 
             MessageBox.Show(FindResource("ComparisonDoneText").ToString(),
                 FindResource("ComparisonDoneCaption").ToString(), MessageBoxButton.OK, MessageBoxImage.Information);
@@ -123,7 +124,7 @@
                 return;
             }
 
-            int barcodeColumn = ((KeyValuePair<int, string>)this.CompareBarcodeColumnBox.SelectionBoxItem).Key;
+            int barcodeColumn = Helper.NumberFromExcelColumn(((KeyValuePair<string, string>)this.CompareBarcodeColumnBox.SelectionBoxItem).Key);
 
             foreach (string item in this.viewModel.ComparedFiles)
             {
@@ -142,7 +143,7 @@
 
         private void BtnSumFiles_OnClick(object sender, RoutedEventArgs e)
         {
-            Dictionary<string, int> stock = new Dictionary<string, int>();
+            Inventory inventory = new Inventory();
             string fileName;
 
             if (this.viewModel.RawFiles.Count <= 0)
@@ -163,19 +164,19 @@
                 return;
             }
 
-            int barcodeColumn = ((KeyValuePair<int, string>)this.RawBarcodeColumnBox.SelectionBoxItem).Key;
-            int countColumn = ((KeyValuePair<int, string>)this.RawCoundColumnBox.SelectionBoxItem).Key;
+            int barcodeColumn = Helper.NumberFromExcelColumn(((KeyValuePair<string, string>)this.RawBarcodeColumnBox.SelectionBoxItem).Key);
+            int internalCodeColumn = Helper.NumberFromExcelColumn(((KeyValuePair<string, string>)this.RawInternalCodeColumnBox.SelectionBoxItem).Key);
+            int countColumn = Helper.NumberFromExcelColumn(((KeyValuePair<string, string>)this.RawCoundColumnBox.SelectionBoxItem).Key);
 
             foreach (string item in this.viewModel.RawFiles)
             {
-                stock = ExcelHelper.ReadBarcodeAndCountFromExcelFile(stock, item, barcodeColumn, countColumn,
+                inventory = ExcelHelper.ReadBarcodeAndCountFromExcelFile(inventory, item, barcodeColumn, internalCodeColumn, countColumn,
                     this.RawFileSkipHeaderCheckbox.IsChecked);
             }
 
-            if (stock.Count > 0)
+            if (inventory.Count > 0)
             {
-                IOrderedEnumerable<KeyValuePair<string, int>> result = stock.OrderBy(x => x.Key);
-                ExcelHelper.WriteCollectionToExcelFile(fileName, result, "Summed");
+                ExcelHelper.WriteCollectionToExcelFile(fileName, inventory, "Summed");
 
                 MessageBox.Show(FindResource("SumDoneCaption").ToString(), FindResource("SumDoneText").ToString(),
                     MessageBoxButton.OK, MessageBoxImage.Information);
@@ -205,9 +206,9 @@
             {
                 this.viewModel.OfficialFileName = openDialog.FileName;
 
-                Dictionary<int, string> columns = ExcelHelper.ReadFirstRowFromExcelFile(this.viewModel.OfficialFileName);
+                Dictionary<string, string> columns = ExcelHelper.ReadFirstRowFromExcelFile(this.viewModel.OfficialFileName);
                 this.viewModel.OfficialFileColumns.Clear();
-                foreach (KeyValuePair<int, string> column in columns ?? new Dictionary<int, string>())
+                foreach (KeyValuePair<string, string> column in columns ?? new Dictionary<string, string>())
                 {
                     this.viewModel.OfficialFileColumns.Add(column);
                 }

@@ -86,9 +86,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="testdata\Official.xlsx" />
-    <None Include="testdata\Raw1.xlsx" />
-    <None Include="testdata\Raw2.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

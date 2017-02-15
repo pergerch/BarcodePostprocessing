@@ -3218,6 +3218,17 @@
             <param name="byteCount">number of bytes</param>
             <returns>string representation (e.g. '3 mb')</returns>
         </member>
+        <member name="M:Microsoft.HockeyApp.UtilExtensions.ToLongUriEscapeDataString(System.String)">
+            <summary>
+            Converts a string to its escaped representation.
+            </summary>
+            <remarks>
+            Uri.EscapeDataString throws when The length of stringToEscape exceeds 32766 characters.
+            This method handles long strings as well.
+            </remarks>
+            <param name="stringToEscape">The string to escape.</param>
+            <returns>A System.String that contains the escaped representation of stringToEscape.</returns>
+        </member>
         <member name="T:Microsoft.HockeyApp.HockeyClient">
             <summary>
             Implements the HockeyClient singleton
@@ -3334,6 +3345,12 @@
             <summary>
             Gets a value indicating whether telemetry client has been initialized.
             </summary>
+        </member>
+        <member name="M:Microsoft.HockeyApp.HockeyClient.TestAndSetIsConfigured">
+            <summary>
+            Atomically checks if Configure has been called and sets it to true.
+            </summary>
+            <returns>True if the method has been previously called, false otherwise</returns>
         </member>
         <member name="P:Microsoft.HockeyApp.HockeyClient.Context">
             <summary>
@@ -4040,7 +4057,7 @@
         </member>
         <member name="T:Microsoft.HockeyApp.IHockeyClient">
             <summary>
-            Public Interface for HockeyClient. Used by static extension methods in platfomr-specific SDKs
+            Public Interface for HockeyClient. Used by static extension methods in platform-specific SDKs
             </summary>
         </member>
         <member name="M:Microsoft.HockeyApp.IHockeyClient.TrackEvent(System.String)">
@@ -4207,6 +4224,12 @@
             <summary>
             DescriptionLoader Func which is called for unhandled exceptions. the returned string is added to the crashlog as description.
             </summary>
+        </member>
+        <member name="M:Microsoft.HockeyApp.Internal.IHockeyClientInternal.TestAndSetIsConfigured">
+            <summary>
+            Atomically checks if Configure has been called and sets it to true.
+            </summary>
+            <returns>True if the method has been previously called, false otherwise</returns>
         </member>
         <member name="M:Microsoft.HockeyApp.Internal.IHockeyClientInternal.HandleInternalUnhandledException(System.Exception)">
             <summary>

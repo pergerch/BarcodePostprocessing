@@ -7,26 +7,20 @@
     [ImplementPropertyChanged]
     public class ViewModel
     {
-        public ViewModel()
-        {
-            ComparedFiles = new ObservableCollection<string>();
-            ComparedFileColumns = new ObservableCollection<KeyValuePair<int, string>>();
-            OfficialFileColumns = new ObservableCollection<KeyValuePair<int, string>>();
-            RawFiles = new ObservableCollection<string>();
-            RawFileColumns = new ObservableCollection<KeyValuePair<int, string>>();
-        }
+        public ObservableCollection<KeyValuePair<string, string>> ComparedFileColumns { get; set; } =
+            new ObservableCollection<KeyValuePair<string, string>>();
 
-        public ObservableCollection<KeyValuePair<int, string>> ComparedFileColumns { get; set; }
+        public ObservableCollection<string> ComparedFiles { get; set; } = new ObservableCollection<string>();
 
-        public ObservableCollection<string> ComparedFiles { get; set; }
-
-        public ObservableCollection<KeyValuePair<int, string>> OfficialFileColumns { get; set; }
+        public ObservableCollection<KeyValuePair<string, string>> OfficialFileColumns { get; set; } =
+            new ObservableCollection<KeyValuePair<string, string>>();
 
         public string OfficialFileName { get; set; }
 
-        public ObservableCollection<KeyValuePair<int, string>> RawFileColumns { get; set; }
+        public ObservableCollection<KeyValuePair<string, string>> RawFileColumns { get; set; } =
+            new ObservableCollection<KeyValuePair<string, string>>();
 
-        public ObservableCollection<string> RawFiles { get; set; }
+        public ObservableCollection<string> RawFiles { get; set; } = new ObservableCollection<string>();
 
         public string RawSummedFileName { get; set; }
     }

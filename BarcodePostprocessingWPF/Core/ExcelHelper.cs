@@ -1,11 +1,14 @@
 ﻿namespace BarcodePostprocessingWPF.Core
 {
+    using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Drawing;
     using System.IO;
     using System.Linq;
     using System.Windows;
     using BarcodePostprocessingWPF.Model;
+    using BarcodePostprocessingWPF.Repository;
     using Microsoft.HockeyApp;
     using OfficeOpenXml;
     using OfficeOpenXml.Style;
@@ -99,8 +102,8 @@
             }
         }
 
-        public static Dictionary<string, int> ReadBarcodeAndCountFromExcelFile(Dictionary<string, int> stock,
-            string filename, int barcodeColumn, int numColumn, bool? skipFirstRow = null)
+        public static Inventory ReadBarcodeAndCountFromExcelFile(Inventory inventory,
+            string filename, int barcodeColumn, int internalCodeColumn, int numColumn, bool? skipFirstRow = null)
         {
             try
             {
@@ -112,22 +115,37 @@
 
                 for (int i = firstRow; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    string barcode = workSheet.Cells[i, barcodeColumn].Value.ToString().Trim();
-                    int num = int.Parse(workSheet.Cells[i, numColumn].Value.ToString());
+                    string barcode = workSheet.Cells[i, barcodeColumn].Value?.ToString().Trim();
+                    string internalCode = workSheet.Cells[i, internalCodeColumn].Value?.ToString().Trim();
 
-                    if (stock.ContainsKey(barcode))
+                    int num;
+                    if (!int.TryParse(workSheet.Cells[i, numColumn].Value?.ToString(), out num))
                     {
-                        int current = stock[barcode];
-                        current += num;
-                        stock[barcode] = current;
+                        throw new DataException($"Error in row: {i}. Column 'Count' is empty or not a number: {workSheet.Cells[i, numColumn].Value}.");
+                    }
+
+                    if (!string.IsNullOrEmpty(barcode))
+                    {
+                        inventory.AddBarcodeCount(barcode, num);
+                    }
+                    else if (!string.IsNullOrEmpty(internalCode))
+                    {
+                        inventory.AddInternalCodeCount(internalCode, num);
                     }
                     else
                     {
-                        stock.Add(barcode, num);
+                        throw new DataException($"Error in row: {i}. Neither barcode nor internal code is set.");
                     }
                 }
 
-                return stock;
+                return inventory;
+            }
+            catch (DataException ex)
+            {
+                MessageBox.Show(ex.Message, "Data Exception", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                ((HockeyClient)HockeyClient.Current).HandleException(ex);
+                return null;
             }
             catch (IOException ex)
             {
@@ -138,18 +156,18 @@
             }
         }
 
-        public static Dictionary<int, string> ReadFirstRowFromExcelFile(string filename)
+        public static Dictionary<string, string> ReadFirstRowFromExcelFile(string filename)
         {
             try
             {
-                Dictionary<int, string> values = new Dictionary<int, string>();
+                Dictionary<string, string> values = new Dictionary<string, string>();
                 ExcelPackage package = new ExcelPackage(new FileInfo(filename));
                 ExcelWorksheet workSheet = package.Workbook.Worksheets[1];
 
                 int firstRow = workSheet.Dimension.Start.Row;
                 for (int i = workSheet.Dimension.Start.Column; i <= workSheet.Dimension.End.Column; i++)
                 {
-                    values.Add(i, workSheet.Cells[firstRow, i].Value.ToString().Trim());
+                    values.Add(Helper.ExcelColumnFromNumber(i), workSheet.Cells[firstRow, i].Value.ToString().Trim());
                 }
 
                 return values;
@@ -201,7 +219,7 @@
             }
         }
 
-        public static void WriteCollectionToExcelFile<T>(string filename, IEnumerable<T> collection, string sheetName)
+        public static void WriteCollectionToExcelFile(string filename, Inventory inventory, string sheetName)
         {
             try
             {
@@ -213,7 +231,7 @@
                 ExcelPackage package = new ExcelPackage(new FileInfo(filename));
                 ExcelWorksheet workSheet = package.Workbook.Worksheets.Add(sheetName);
 
-                workSheet.Cells["A1"].LoadFromCollection(collection);
+                workSheet.Cells["A1"].LoadFromCollection(inventory.Array);
 
                 package.Save();
             }
