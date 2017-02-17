@@ -4,9 +4,11 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Drawing;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Windows;
+    using System.Windows.Documents;
     using BarcodePostprocessingWPF.Model;
     using BarcodePostprocessingWPF.Repository;
     using Microsoft.HockeyApp;
@@ -15,12 +17,13 @@
 
     public class ExcelHelper
     {
-        public static void CompareSumWithOfficial(string filename, Dictionary<string, int> sumBarcodes,
-            int barcodeColumn, int numColumn, int priceColumn, bool? skipFirstRow = null)
+        public static void CompareSumWithOfficial(string filename, Inventory inventory,
+            List<int> barcodeColumns, int internalCodeColumn, int numColumn, int priceColumn, bool? skipFirstRow = null)
         {
             try
             {
-                ExcelPackage package = new ExcelPackage(new FileInfo(filename));
+                FileInfo fileInfo = new FileInfo(filename);
+                ExcelPackage package = new ExcelPackage(fileInfo);
                 ExcelWorksheet workSheet = package.Workbook.Worksheets[1];
 
                 int lastColumn = workSheet.Dimension.End.Column;
@@ -29,27 +32,47 @@
 
                 for (int i = firstRow; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    if (workSheet.Cells[i, barcodeColumn].Value==null)
+                    if (workSheet.Cells[i, internalCodeColumn].Value == null)
                     {
+                        workSheet.Cells[i, internalCodeColumn].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        workSheet.Cells[i, internalCodeColumn].Style.Fill.BackgroundColor.SetColor(Color.DarkRed);
+
                         continue;
                     }
 
-                    string barcode = workSheet.Cells[i, barcodeColumn].Value.ToString().Trim();
-                    int num = (int) double.Parse(workSheet.Cells[i, numColumn].Value.ToString());
-                    double price = double.Parse(workSheet.Cells[i, priceColumn].Value.ToString());
-
-                    int current = 0;
-                    if (sumBarcodes.ContainsKey(barcode))
+                    string internalCode = workSheet.Cells[i, internalCodeColumn].Value?.ToString().Trim();
+                    double num, price;
+                    if (!double.TryParse(workSheet.Cells[i, numColumn].Value?.ToString(), out num))
                     {
-                        current = sumBarcodes[barcode];
-                        sumBarcodes.Remove(barcode);
+                        throw new DataException(
+                            $"Error in row {i}. Column 'Count' is empty or not a number: {workSheet.Cells[i, numColumn].Value}.{Environment.NewLine}" +
+                            $"File: {fileInfo.Name}");
                     }
-                    int variance = current - num;
-                    workSheet.Cells[i, lastColumn + 1].Value = barcode;
+                    if (!double.TryParse(workSheet.Cells[i, priceColumn].Value?.ToString(), out price))
+                    {
+                        throw new DataException(
+                            $"Error in row {i}. Column 'Price' is empty or not a number: {workSheet.Cells[i, priceColumn].Value}.{Environment.NewLine}" +
+                            $"File: {fileInfo.Name}");
+                    }
+
+                    List<string> barcodes = new List<string>();
+                    foreach (int barcodeColumn in barcodeColumns)
+                    {
+                        string barcode = workSheet.Cells[i, barcodeColumn].Value?.ToString().Trim();
+                        if (!string.IsNullOrEmpty(barcode))
+                        {
+                            barcodes.Add(barcode);
+                        }
+                    }
+
+                    int matches = inventory.GetMatches(barcodes, internalCode, (int)num);
+
+                    int variance = matches - (int)num;
+                    workSheet.Cells[i, lastColumn + 1].Value = internalCode;
                     workSheet.Cells[i, lastColumn + 1].Style.Border.Left.Style = ExcelBorderStyle.Double;
                     workSheet.Cells[i, lastColumn + 1].Style.Border.Left.Color.SetColor(Color.Black);
 
-                    workSheet.Cells[i, lastColumn + 2].Value = current;
+                    workSheet.Cells[i, lastColumn + 2].Value = matches;
                     workSheet.Cells[i, lastColumn + 3].Value = variance;
                     workSheet.Cells[i, lastColumn + 4].Value = variance * price;
                     if (variance < 0)
@@ -76,23 +99,35 @@
                 }
 
                 // Any additional values that were not present in the official one
-                if (sumBarcodes.Count > 0)
+                int nextRow = workSheet.Dimension.End.Row;
+                ICollection<InventoryItem> items = inventory.RemainingItems;
+                foreach (InventoryItem item in items ?? new List<InventoryItem>())
                 {
-                    int nextRow = workSheet.Dimension.End.Row;
-                    foreach (KeyValuePair<string, int> pair in sumBarcodes)
+                    nextRow++;
+                    if (!string.IsNullOrEmpty(item.InternalCode))
                     {
-                        nextRow++;
-                        workSheet.Cells[nextRow, lastColumn + 1].Value = pair.Key;
-                        workSheet.Cells[nextRow, lastColumn + 1].Style.Border.Left.Style = ExcelBorderStyle.Double;
-                        workSheet.Cells[nextRow, lastColumn + 1].Style.Border.Left.Color.SetColor(Color.Black);
-                        workSheet.Cells[nextRow, lastColumn + 2].Value = pair.Value;
-                        workSheet.Cells[nextRow, lastColumn + 3].Value = pair.Value;
-                        workSheet.Cells[nextRow, lastColumn + 3].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        workSheet.Cells[nextRow, lastColumn + 3].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                        workSheet.Cells[nextRow, lastColumn + 1].Value = "i " + item.InternalCode;
                     }
+                    else if (!string.IsNullOrEmpty(item.Barcode))
+                    {
+                        workSheet.Cells[nextRow, lastColumn + 1].Value = item.Barcode;
+                    }
+
+                    workSheet.Cells[nextRow, lastColumn + 1].Style.Border.Left.Style = ExcelBorderStyle.Double;
+                    workSheet.Cells[nextRow, lastColumn + 1].Style.Border.Left.Color.SetColor(Color.Black);
+
+                    workSheet.Cells[nextRow, lastColumn + 2].Value = item.Count;
+                    workSheet.Cells[nextRow, lastColumn + 3].Value = item.Count;
+                    workSheet.Cells[nextRow, lastColumn + 3].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    workSheet.Cells[nextRow, lastColumn + 3].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
                 }
 
                 package.Save();
+            }
+            catch (DataException ex)
+            {
+                MessageBox.Show(ex.Message, "Data Exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                ((HockeyClient)HockeyClient.Current).HandleException(ex);
             }
             catch (IOException ex)
             {
@@ -102,12 +137,13 @@
             }
         }
 
-        public static Inventory ReadBarcodeAndCountFromExcelFile(Inventory inventory,
-            string filename, int barcodeColumn, int internalCodeColumn, int numColumn, bool? skipFirstRow = null)
+        public static Inventory ReadBarcodeAndCountFromExcelFile(Inventory inventory, string filename, int barcodeColumn,
+            int internalCodeColumn, int numColumn, bool? skipFirstRow = null)
         {
             try
             {
-                ExcelPackage package = new ExcelPackage(new FileInfo(filename));
+                FileInfo fileInfo = new FileInfo(filename);
+                ExcelPackage package = new ExcelPackage(fileInfo);
                 ExcelWorksheet workSheet = package.Workbook.Worksheets[1];
 
                 int firstRow = (skipFirstRow == true)
@@ -121,7 +157,9 @@
                     int num;
                     if (!int.TryParse(workSheet.Cells[i, numColumn].Value?.ToString(), out num))
                     {
-                        throw new DataException($"Error in row: {i}. Column 'Count' is empty or not a number: {workSheet.Cells[i, numColumn].Value}.");
+                        throw new DataException(
+                            $"Error in row {i}. Column 'Count' is empty or not a number: {workSheet.Cells[i, numColumn].Value}.{Environment.NewLine}" +
+                            $"File: {fileInfo.Name}");
                     }
 
                     if (!string.IsNullOrEmpty(barcode))
@@ -134,7 +172,9 @@
                     }
                     else
                     {
-                        throw new DataException($"Error in row: {i}. Neither barcode nor internal code is set.");
+                        throw new DataException(
+                            $"Error in row {i}. Neither barcode nor internal code is set.{Environment.NewLine}" +
+                            $"File: {fileInfo.Name}");
                     }
                 }
 
@@ -142,8 +182,7 @@
             }
             catch (DataException ex)
             {
-                MessageBox.Show(ex.Message, "Data Exception", MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBox.Show(ex.Message, "Data Exception", MessageBoxButton.OK, MessageBoxImage.Error);
                 ((HockeyClient)HockeyClient.Current).HandleException(ex);
                 return null;
             }
@@ -278,7 +317,7 @@
                 {
                     ExcelRowToCompare row =
                         allItems.Where(x => x.Barcode == barcode).SingleOrDefault(x => x.Count > 0) ??
-                            allItems.First(x => x.Barcode == barcode);
+                        allItems.First(x => x.Barcode == barcode);
 
                     using (ExcelPackage packageFrom = new ExcelPackage(new FileInfo(row.Filename)))
                     {

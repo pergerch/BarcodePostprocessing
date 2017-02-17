@@ -16,6 +16,8 @@
 
         public int Count => InventoryItems.Count;
 
+        public ICollection<InventoryItem> RemainingItems => InventoryItems;
+
         private ICollection<InventoryItem> InventoryItems { get; } = new List<InventoryItem>();
 
         public void AddBarcodeCount(string barcode, int count)
@@ -44,6 +46,33 @@
             {
                 item.Count += count;
             }
+        }
+
+        public int GetMatches(List<string> barcodes, string internalCode, int num)
+        {
+            int matches = 0;
+
+            InventoryItem internalCodeItem = InventoryItems.FirstOrDefault(x => x.InternalCode == internalCode);
+            if (internalCodeItem != null)
+            {
+                matches += internalCodeItem.Count;
+                InventoryItems.Remove(internalCodeItem);
+            }
+
+            List<InventoryItem> barcodeItems = new List<InventoryItem>();
+            foreach (string barcode in barcodes)
+            {
+                InventoryItem barcodeItem = InventoryItems.FirstOrDefault(x => x.Barcode == barcode);
+                if (barcodeItem != null)
+                {
+                    barcodeItems.Add(barcodeItem);
+                    InventoryItems.Remove(barcodeItem);
+                }
+            }
+
+            matches += barcodeItems.Sum(x => x.Count);
+
+            return matches;
         }
     }
 }

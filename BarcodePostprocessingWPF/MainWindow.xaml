@@ -178,8 +178,8 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <CheckBox Grid.Column="1" Grid.Row="0" Content="{DynamicResource Skip}" Name="OfficialFileSkipHeaderCheckbox"></CheckBox>
-                <Label Grid.Column="0" Grid.Row="1" Content="{DynamicResource Barcode}"></Label>
-                <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding OfficialFileColumns}" Name="OfficialBarcodeColumnBox">
+                <Label Grid.Column="0" Grid.Row="1" Content="Internal Code:"></Label>
+                <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding OfficialFileColumns}" Name="OfficialInternalCodeColumnBox">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
@@ -214,8 +214,46 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
+                <Label Grid.Column="0" Grid.Row="3" Content="{DynamicResource Price}"></Label>
                 <Button HorizontalAlignment="Stretch" Grid.Column="2" Grid.Row="0" Grid.RowSpan="4" Name="BtnCompareFiles"
                     Click="BtnCompareFiles_OnClick" Margin="10,0,0,0" Content="{DynamicResource CompareFilesButton}" />
+            </Grid>
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,10,10,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Label Grid.Column="0" Grid.Row="0" Content="Barcode fields:"></Label>
+                <ComboBox Grid.Column="0" Grid.Row="1" ItemsSource="{Binding OfficialFileColumns}" Name="OfficialBarcodeColumnBox" Margin="10,0,0,0">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock>Col &#160;</TextBlock>
+                                <TextBlock Text="{Binding Path=Key}" Width="25" />
+                                <TextBlock Text="{Binding Path=Value}" FontStyle="Italic" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="1" Name="OfficialBarcodeAdd" Margin="10,0,10,10" Content="&gt;&gt;" Click="OfficialBarcodeAdd_OnClick" />
+                <Button HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="2" Name="OfficialBarcodeRemove" Margin="10,10,10,0" Content="&lt;&lt;" Click="OfficialBarcodeRemove_OnClick" />
+                <ListBox Grid.Column="2" Grid.Row="1" Grid.RowSpan="2" Height="70" ItemsSource="{Binding OfficialBarcodeListItems}" Name="OfficialBarcodeList">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock>Col &#160;</TextBlock>
+                                <TextBlock Text="{Binding Path=Key}" Width="25" />
+                                <TextBlock Text="{Binding Path=Value}" FontStyle="Italic" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </Grid>
         </StackPanel>
         <StatusBar DockPanel.Dock="Bottom" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">

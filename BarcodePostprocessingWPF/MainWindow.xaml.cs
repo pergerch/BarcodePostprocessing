@@ -1,6 +1,7 @@
 ﻿namespace BarcodePostprocessingWPF
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
@@ -58,7 +59,8 @@
                     this.viewModel.RawFiles.Add(fileName);
                 }
 
-                Dictionary<string, string> columns = ExcelHelper.ReadFirstRowFromExcelFile(this.viewModel.RawFiles.First());
+                Dictionary<string, string> columns =
+                    ExcelHelper.ReadFirstRowFromExcelFile(this.viewModel.RawFiles.First());
                 this.viewModel.RawFileColumns.Clear();
                 foreach (KeyValuePair<string, string> column in columns ?? new Dictionary<string, string>())
                 {
@@ -89,14 +91,25 @@
                 return;
             }
 
-            Inventory inventory = ExcelHelper.ReadBarcodeAndCountFromExcelFile(new Inventory(), 
+            Inventory inventory = ExcelHelper.ReadBarcodeAndCountFromExcelFile(new Inventory(),
                 this.viewModel.RawSummedFileName, 1, 2, 3);
-            int barcodeColumn = Helper.NumberFromExcelColumn(((KeyValuePair<string, string>)this.OfficialBarcodeColumnBox.SelectionBoxItem).Key);
-            int countColumn = Helper.NumberFromExcelColumn(((KeyValuePair<string, string>)this.OfficialCountColumnBox.SelectionBoxItem).Key);
-            int priceColumn = Helper.NumberFromExcelColumn(((KeyValuePair<string, string>)this.OfficialPriceColumnBox.SelectionBoxItem).Key);
 
-            //ExcelHelper.CompareSumWithOfficial(fileName, inventory, barcodeColumn, countColumn, priceColumn,
-            //    this.OfficialFileSkipHeaderCheckbox.IsChecked);
+            List<int> barcodeColumns =
+                this.OfficialBarcodeList.Items.Cast<KeyValuePair<string, string>>()
+                    .Select(x => Helper.NumberFromExcelColumn(x.Key))
+                    .ToList();
+            int internalCodeColumn =
+                Helper.NumberFromExcelColumn(
+                    ((KeyValuePair<string, string>)this.OfficialInternalCodeColumnBox.SelectedItem).Key);
+            int countColumn =
+                Helper.NumberFromExcelColumn(
+                    ((KeyValuePair<string, string>)this.OfficialCountColumnBox.SelectedItem).Key);
+            int priceColumn =
+                Helper.NumberFromExcelColumn(
+                    ((KeyValuePair<string, string>)this.OfficialPriceColumnBox.SelectedItem).Key);
+
+            ExcelHelper.CompareSumWithOfficial(fileName, inventory, barcodeColumns, internalCodeColumn, countColumn, priceColumn,
+                this.OfficialFileSkipHeaderCheckbox.IsChecked);
 
             MessageBox.Show(FindResource("ComparisonDoneText").ToString(),
                 FindResource("ComparisonDoneCaption").ToString(), MessageBoxButton.OK, MessageBoxImage.Information);
@@ -124,7 +137,9 @@
                 return;
             }
 
-            int barcodeColumn = Helper.NumberFromExcelColumn(((KeyValuePair<string, string>)this.CompareBarcodeColumnBox.SelectionBoxItem).Key);
+            int barcodeColumn =
+                Helper.NumberFromExcelColumn(
+                    ((KeyValuePair<string, string>)this.CompareBarcodeColumnBox.SelectedItem).Key);
 
             foreach (string item in this.viewModel.ComparedFiles)
             {
@@ -164,17 +179,22 @@
                 return;
             }
 
-            int barcodeColumn = Helper.NumberFromExcelColumn(((KeyValuePair<string, string>)this.RawBarcodeColumnBox.SelectionBoxItem).Key);
-            int internalCodeColumn = Helper.NumberFromExcelColumn(((KeyValuePair<string, string>)this.RawInternalCodeColumnBox.SelectionBoxItem).Key);
-            int countColumn = Helper.NumberFromExcelColumn(((KeyValuePair<string, string>)this.RawCoundColumnBox.SelectionBoxItem).Key);
+            int barcodeColumn =
+                Helper.NumberFromExcelColumn(
+                    ((KeyValuePair<string, string>)this.RawBarcodeColumnBox.SelectedItem).Key);
+            int internalCodeColumn =
+                Helper.NumberFromExcelColumn(
+                    ((KeyValuePair<string, string>)this.RawInternalCodeColumnBox.SelectedItem).Key);
+            int countColumn =
+                Helper.NumberFromExcelColumn(((KeyValuePair<string, string>)this.RawCoundColumnBox.SelectedItem).Key);
 
             foreach (string item in this.viewModel.RawFiles)
             {
-                inventory = ExcelHelper.ReadBarcodeAndCountFromExcelFile(inventory, item, barcodeColumn, internalCodeColumn, countColumn,
-                    this.RawFileSkipHeaderCheckbox.IsChecked);
+                inventory = ExcelHelper.ReadBarcodeAndCountFromExcelFile(inventory, item, barcodeColumn,
+                    internalCodeColumn, countColumn, this.RawFileSkipHeaderCheckbox.IsChecked);
             }
 
-            if (inventory.Count > 0)
+            if (inventory != null && inventory.Count > 0)
             {
                 ExcelHelper.WriteCollectionToExcelFile(fileName, inventory, "Summed");
 
@@ -198,6 +218,32 @@
             SetLanguageDictionary(LanguageEnum.German);
         }
 
+        private void OfficialBarcodeAdd_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (this.OfficialBarcodeColumnBox.SelectedItem != null)
+            {
+                KeyValuePair<string, string> item =
+                    (KeyValuePair<string, string>)this.OfficialBarcodeColumnBox.SelectedItem;
+                if (
+                    this.OfficialBarcodeList.Items.Cast<KeyValuePair<string, string>>()
+                        .Any(currentItem => item.Key == currentItem.Key))
+                {
+                    // If the key already exists in the list then skip the "add"
+                    return;
+                }
+
+                this.OfficialBarcodeList.Items.Add(item);
+            }
+        }
+
+        private void OfficialBarcodeRemove_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (this.OfficialBarcodeList.SelectedItem != null)
+            {
+                this.OfficialBarcodeList.Items.Remove(this.OfficialBarcodeList.SelectedItem);
+            }
+        }
+
         private void OfficialFileButton_OnClick(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openDialog = new OpenFileDialog { Multiselect = true, Filter = "Excel file|*.xlsx" };
@@ -206,7 +252,8 @@
             {
                 this.viewModel.OfficialFileName = openDialog.FileName;
 
-                Dictionary<string, string> columns = ExcelHelper.ReadFirstRowFromExcelFile(this.viewModel.OfficialFileName);
+                Dictionary<string, string> columns =
+                    ExcelHelper.ReadFirstRowFromExcelFile(this.viewModel.OfficialFileName);
                 this.viewModel.OfficialFileColumns.Clear();
                 foreach (KeyValuePair<string, string> column in columns ?? new Dictionary<string, string>())
                 {
