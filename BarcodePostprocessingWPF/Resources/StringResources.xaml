@@ -32,4 +32,8 @@
     <system:String x:Key="SumCompareDoneText">Summing up done and stored.</system:String>
     <system:String x:Key="InputMissingCaption">Input missing</system:String>
     <system:String x:Key="InputMissingText">Please select the input files first.</system:String>
+
+    <system:String x:Key="InternalCode">Internal Code:</system:String>
+    <system:String x:Key="NewInternalCode">New Internal Code:</system:String>
+    <system:String x:Key="BarcodeFields">Barcode Fields:</system:String>
 </ResourceDictionary>

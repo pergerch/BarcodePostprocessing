@@ -33,4 +33,7 @@
     <system:String x:Key="InputMissingCaption">Липсват входни данни</system:String>
     <system:String x:Key="InputMissingText">Моля първо селектирайте входни данни.</system:String>
 
+    <system:String x:Key="InternalCode">Вътрешен код:</system:String>
+    <system:String x:Key="NewInternalCode">Нов вътрешен код:</system:String>
+    <system:String x:Key="BarcodeFields">Баркод полета:</system:String>
 </ResourceDictionary>

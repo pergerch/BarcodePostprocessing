@@ -74,7 +74,7 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-                <Label Grid.Row="2" Grid.Column="0"  Content="Internal Code:" />
+                <Label Grid.Row="2" Grid.Column="0"  Content="{DynamicResource InternalCode}"  />
                 <ComboBox Grid.Row="2" Grid.Column="1"  ItemsSource="{Binding RawFileColumns}"
                     Name="RawInternalCodeColumnBox" >
                     <ComboBox.ItemTemplate>
@@ -87,7 +87,7 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-                <Label Grid.Column="0" Grid.Row="3" Content="{DynamicResource Count}"  Grid.RowSpan="2"/>
+                <Label Grid.Column="0" Grid.Row="3" Content="{DynamicResource Count}" Grid.RowSpan="2"/>
                 <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding RawFileColumns}" Name="RawCoundColumnBox">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
@@ -136,7 +136,7 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <CheckBox Grid.Column="1" Grid.Row="0" Content="{DynamicResource Skip}" Name="CompareFileSkipHeaderCheckbox"></CheckBox>
-                <Label Grid.Column="0" Grid.Row="1" Content="New Internal Code:" Height="25"></Label>
+                <Label Grid.Column="0" Grid.Row="1" Content="{DynamicResource NewInternalCode}" Height="25"></Label>
                 <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding ComparedFileColumns}" Name="CompareBarcodeColumnBox" Height="25">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
@@ -184,7 +184,7 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <CheckBox Grid.Column="1" Grid.Row="0" Content="{DynamicResource Skip}" Name="OfficialFileSkipHeaderCheckbox"></CheckBox>
-                <Label Grid.Column="0" Grid.Row="1" Content="Internal Code:" Height="25"></Label>
+                <Label Grid.Column="0" Grid.Row="1" Content="{DynamicResource InternalCode}" Height="25"></Label>
                 <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding OfficialFileColumns}" Name="OfficialInternalCodeColumnBox" Height="25">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
@@ -234,7 +234,7 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <Label Grid.Column="0" Grid.Row="0" Content="Barcode fields:" Height="25"></Label>
+                <Label Grid.Column="0" Grid.Row="0" Content="{DynamicResource BarcodeFields}" Height="25"></Label>
                 <ComboBox Grid.Column="0" Grid.Row="1" ItemsSource="{Binding OfficialFileColumns}" Name="OfficialBarcodeColumnBox" Margin="0" Height="25" VerticalAlignment="Top">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>

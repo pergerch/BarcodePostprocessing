@@ -32,4 +32,8 @@
     <system:String x:Key="SumCompareDoneText">Summierung erfolgreich durchgeführt und gespeichert.</system:String>
     <system:String x:Key="InputMissingCaption">Dateien fehlen</system:String>
     <system:String x:Key="InputMissingText">Bitte zuerst Excel Dateien zum Summieren hinzufügen.</system:String>
+
+    <system:String x:Key="InternalCode">Interner Code:</system:String>
+    <system:String x:Key="NewInternalCode">Neuer Interner Code:</system:String>
+    <system:String x:Key="BarcodeFields">Barcode Spalten:</system:String>
 </ResourceDictionary>
