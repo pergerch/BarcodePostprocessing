@@ -45,13 +45,13 @@
                     if (!double.TryParse(workSheet.Cells[i, numColumn].Value?.ToString(), out num))
                     {
                         throw new DataException(
-                            $"Error in row {i}. Column 'Count' is empty or not a number: {workSheet.Cells[i, numColumn].Value}.{Environment.NewLine}" +
+                            $"Error in row {i}. Column 'Count' is empty or not a number: '{workSheet.Cells[i, numColumn].Value}'.{Environment.NewLine}" +
                             $"File: {fileInfo.Name}");
                     }
                     if (!double.TryParse(workSheet.Cells[i, priceColumn].Value?.ToString(), out price))
                     {
                         throw new DataException(
-                            $"Error in row {i}. Column 'Price' is empty or not a number: {workSheet.Cells[i, priceColumn].Value}.{Environment.NewLine}" +
+                            $"Error in row {i}. Column 'Price' is empty or not a number: '{workSheet.Cells[i, priceColumn].Value}'.{Environment.NewLine}" +
                             $"File: {fileInfo.Name}");
                     }
 
@@ -158,7 +158,7 @@
                     if (!int.TryParse(workSheet.Cells[i, numColumn].Value?.ToString(), out num))
                     {
                         throw new DataException(
-                            $"Error in row {i}. Column 'Count' is empty or not a number: {workSheet.Cells[i, numColumn].Value}.{Environment.NewLine}" +
+                            $"Error in row {i}. Column 'Count' is empty or not a number: '{workSheet.Cells[i, numColumn].Value}'.{Environment.NewLine}" +
                             $"File: {fileInfo.Name}");
                     }
 
@@ -206,7 +206,7 @@
                 int firstRow = workSheet.Dimension.Start.Row;
                 for (int i = workSheet.Dimension.Start.Column; i <= workSheet.Dimension.End.Column; i++)
                 {
-                    values.Add(Helper.ExcelColumnFromNumber(i), workSheet.Cells[firstRow, i].Value.ToString().Trim());
+                    values.Add(Helper.ExcelColumnFromNumber(i), workSheet.Cells[firstRow, i].Value?.ToString().Trim());
                 }
 
                 return values;
@@ -220,13 +220,14 @@
             }
         }
 
-        public static List<ExcelRowToCompare> ReadRowsFromExcelFile(string filename, int barcodeColumn,
+        public static List<ExcelRowToCompare> ReadRowsFromExcelFile(string filename, int internalCodeColumn,
             bool? skipFirstRow = null)
         {
             try
             {
                 List<ExcelRowToCompare> rows = new List<ExcelRowToCompare>();
-                ExcelPackage package = new ExcelPackage(new FileInfo(filename));
+                FileInfo fileInfo = new FileInfo(filename);
+                ExcelPackage package = new ExcelPackage(fileInfo);
                 ExcelWorksheet workSheet = package.Workbook.Worksheets[1];
 
                 int firstRow = workSheet.Dimension.Start.Row;
@@ -238,16 +239,40 @@
 
                 for (int i = firstRow; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    rows.Add(new ExcelRowToCompare
+                    int num;
+                    if (!int.TryParse(workSheet.Cells[i, internalCodeColumn + 1].Value?.ToString(), out num))
                     {
-                        Barcode = workSheet.Cells[i, barcodeColumn].Value.ToString().Trim(),
-                        Count = int.Parse(workSheet.Cells[i, barcodeColumn + 1].Value.ToString()),
-                        Row = i,
-                        Filename = filename
-                    });
+                        throw new DataException(
+                            $"Error in row {i}. Column 'Count' is empty or not a number: '{workSheet.Cells[i, internalCodeColumn + 1].Value}'.{Environment.NewLine}" +
+                            $"File: {fileInfo.Name}");
+                    }
+
+                    string internalCode = workSheet.Cells[i, internalCodeColumn].Value?.ToString().Trim();
+                    if (!string.IsNullOrEmpty(internalCode))
+                    {
+                        rows.Add(new ExcelRowToCompare
+                        {
+                            Barcode = internalCode,
+                            Count = num,
+                            Row = i,
+                            Filename = filename
+                        });
+                    }
+                    else
+                    {
+                        throw new DataException(
+                            $"Error in row {i}. Column 'Internal Code' is empty or not a number: '{workSheet.Cells[i, internalCodeColumn].Value}'.{Environment.NewLine}" +
+                            $"File: {fileInfo.Name}");
+                    }
                 }
 
                 return rows;
+            }
+            catch (DataException ex)
+            {
+                MessageBox.Show(ex.Message, "Data Exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                ((HockeyClient)HockeyClient.Current).HandleException(ex);
+                return null;
             }
             catch (IOException ex)
             {
@@ -285,15 +310,15 @@
         public static void WriteComparedSumsToExcelFile(string filename, List<ExcelRowToCompare> allItems,
             string sheetName)
         {
+            FileInfo fileInfo = new FileInfo(filename);
             try
             {
-                List<List<string>> result = new List<List<string>>();
                 if (File.Exists(filename))
                 {
                     File.Delete(filename);
                 }
 
-                ExcelPackage package = new ExcelPackage(new FileInfo(filename));
+                ExcelPackage package = new ExcelPackage(fileInfo);
                 ExcelWorksheet workSheet = package.Workbook.Worksheets.Add(sheetName);
 
                 int currentRowIndex = 1;
@@ -333,7 +358,7 @@
             }
             catch (IOException ex)
             {
-                MessageBox.Show("Cannot access file: " + filename, "IO Exception", MessageBoxButton.OK,
+                MessageBox.Show("Cannot access file: " + fileInfo.Name, "IO Exception", MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 ((HockeyClient)HockeyClient.Current).HandleException(ex);
             }

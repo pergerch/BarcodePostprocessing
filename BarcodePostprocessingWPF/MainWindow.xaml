@@ -124,7 +124,7 @@
             </Grid>
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,10,10,10">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="130" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
@@ -133,7 +133,7 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <CheckBox Grid.Column="1" Grid.Row="0" Content="{DynamicResource Skip}" Name="CompareFileSkipHeaderCheckbox"></CheckBox>
-                <Label Grid.Column="0" Grid.Row="1" Content="{DynamicResource NewBarcode}"></Label>
+                <Label Grid.Column="0" Grid.Row="1" Content="New Internal Code:"></Label>
                 <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding ComparedFileColumns}" Name="CompareBarcodeColumnBox">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
@@ -265,7 +265,7 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Label Name="StatusBarText0" Grid.Column="0" HorizontalAlignment="Left">Ready</Label>
-                    <Label Name="StatusBarText1" Grid.Column="1" HorizontalAlignment="Center">15.02.2017</Label>
+                    <Label Name="StatusBarText1" Grid.Column="1" HorizontalAlignment="Center">17.02.2017</Label>
                     <Label Grid.Column="2" HorizontalAlignment="Right" Name="StatusButtonCopyright"
                             MouseDoubleClick="StatusButtonCopyright_OnMouseDoubleClick" Foreground="#FF3333FF">
                         (c) Christoph, 2017

@@ -120,7 +120,7 @@
             List<ExcelRowToCompare> allItems = new List<ExcelRowToCompare>();
             string fileName;
 
-            if (this.viewModel.ComparedFiles.Count <= 0)
+            if (this.viewModel.ComparedFiles.Count == 0)
             {
                 MessageBox.Show(FindResource("InputMissingText").ToString(),
                     FindResource("InputMissingCaption").ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
@@ -137,13 +137,13 @@
                 return;
             }
 
-            int barcodeColumn =
+            int internalCodeColumn =
                 Helper.NumberFromExcelColumn(
                     ((KeyValuePair<string, string>)this.CompareBarcodeColumnBox.SelectedItem).Key);
 
             foreach (string item in this.viewModel.ComparedFiles)
             {
-                allItems.AddRange(ExcelHelper.ReadRowsFromExcelFile(item, barcodeColumn,
+                allItems.AddRange(ExcelHelper.ReadRowsFromExcelFile(item, internalCodeColumn,
                     this.CompareFileSkipHeaderCheckbox.IsChecked));
             }
 
