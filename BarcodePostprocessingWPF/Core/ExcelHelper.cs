@@ -20,9 +20,9 @@
         public static void CompareSumWithOfficial(string filename, Inventory inventory,
             List<int> barcodeColumns, int internalCodeColumn, int numColumn, int priceColumn, bool? skipFirstRow = null)
         {
+            FileInfo fileInfo = new FileInfo(filename);
             try
             {
-                FileInfo fileInfo = new FileInfo(filename);
                 ExcelPackage package = new ExcelPackage(fileInfo);
                 ExcelWorksheet workSheet = package.Workbook.Worksheets[1];
 
@@ -131,7 +131,7 @@
             }
             catch (IOException ex)
             {
-                MessageBox.Show("Cannot access file: " + filename, "IO Exception", MessageBoxButton.OK,
+                MessageBox.Show("Cannot access file: " + fileInfo.Name, "IO Exception", MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 ((HockeyClient)HockeyClient.Current).HandleException(ex);
             }
@@ -140,9 +140,9 @@
         public static Inventory ReadBarcodeAndCountFromExcelFile(Inventory inventory, string filename, int barcodeColumn,
             int internalCodeColumn, int numColumn, bool? skipFirstRow = null)
         {
+            FileInfo fileInfo = new FileInfo(filename);
             try
             {
-                FileInfo fileInfo = new FileInfo(filename);
                 ExcelPackage package = new ExcelPackage(fileInfo);
                 ExcelWorksheet workSheet = package.Workbook.Worksheets[1];
 
@@ -188,7 +188,7 @@
             }
             catch (IOException ex)
             {
-                MessageBox.Show("Cannot access file: " + filename, "IO Exception", MessageBoxButton.OK,
+                MessageBox.Show("Cannot access file: " + fileInfo.Name, "IO Exception", MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 ((HockeyClient)HockeyClient.Current).HandleException(ex);
                 return null;
@@ -197,10 +197,11 @@
 
         public static Dictionary<string, string> ReadFirstRowFromExcelFile(string filename)
         {
+            FileInfo fileInfo = new FileInfo(filename);
             try
             {
                 Dictionary<string, string> values = new Dictionary<string, string>();
-                ExcelPackage package = new ExcelPackage(new FileInfo(filename));
+                ExcelPackage package = new ExcelPackage(fileInfo);
                 ExcelWorksheet workSheet = package.Workbook.Worksheets[1];
 
                 int firstRow = workSheet.Dimension.Start.Row;
@@ -213,7 +214,7 @@
             }
             catch (IOException ex)
             {
-                MessageBox.Show("Cannot access file: " + filename, "IO Exception", MessageBoxButton.OK,
+                MessageBox.Show("Cannot access file: " + fileInfo.Name, "IO Exception", MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 ((HockeyClient)HockeyClient.Current).HandleException(ex);
                 return null;
@@ -223,10 +224,10 @@
         public static List<ExcelRowToCompare> ReadRowsFromExcelFile(string filename, int internalCodeColumn,
             bool? skipFirstRow = null)
         {
+            FileInfo fileInfo = new FileInfo(filename);
             try
             {
                 List<ExcelRowToCompare> rows = new List<ExcelRowToCompare>();
-                FileInfo fileInfo = new FileInfo(filename);
                 ExcelPackage package = new ExcelPackage(fileInfo);
                 ExcelWorksheet workSheet = package.Workbook.Worksheets[1];
 
@@ -276,7 +277,7 @@
             }
             catch (IOException ex)
             {
-                MessageBox.Show("Cannot access file: " + filename, "IO Exception", MessageBoxButton.OK,
+                MessageBox.Show("Cannot access file: " + fileInfo.Name, "IO Exception", MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 ((HockeyClient)HockeyClient.Current).HandleException(ex);
                 return null;
@@ -285,6 +286,7 @@
 
         public static void WriteCollectionToExcelFile(string filename, Inventory inventory, string sheetName)
         {
+            FileInfo fileInfo = new FileInfo(filename);
             try
             {
                 if (File.Exists(filename))
@@ -292,7 +294,7 @@
                     File.Delete(filename);
                 }
 
-                ExcelPackage package = new ExcelPackage(new FileInfo(filename));
+                ExcelPackage package = new ExcelPackage(fileInfo);
                 ExcelWorksheet workSheet = package.Workbook.Worksheets.Add(sheetName);
 
                 workSheet.Cells["A1"].LoadFromCollection(inventory.Array);
@@ -301,7 +303,7 @@
             }
             catch (IOException ex)
             {
-                MessageBox.Show("Cannot access file: " + filename, "IO Exception", MessageBoxButton.OK,
+                MessageBox.Show("Cannot access file: " + fileInfo.Name, "IO Exception", MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 ((HockeyClient)HockeyClient.Current).HandleException(ex);
             }
