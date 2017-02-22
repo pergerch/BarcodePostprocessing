@@ -253,7 +253,7 @@
                     {
                         rows.Add(new ExcelRowToCompare
                         {
-                            Barcode = internalCode,
+                            InternalCode = internalCode,
                             Count = num,
                             Row = i,
                             Filename = filename
@@ -338,13 +338,22 @@
                     currentRowIndex++;
                 }
 
-                List<string> barcodes = allItems.Select(x => x.Barcode).Distinct().ToList();
+                List<string> internalCodes = allItems.Select(x => x.InternalCode).Distinct().ToList();
 
-                foreach (string barcode in barcodes)
+                foreach (string internalCode in internalCodes)
                 {
                     ExcelRowToCompare row =
-                        allItems.Where(x => x.Barcode == barcode).SingleOrDefault(x => x.Count > 0) ??
-                        allItems.First(x => x.Barcode == barcode);
+                        allItems.Where(x => x.InternalCode == internalCode).SingleOrDefault(x => x.Count > 0) ??
+                        allItems.First(x => x.InternalCode == internalCode && x.Count == 0);
+
+                    if (row == null)
+                    {
+                        int lastColumn = workSheet.Dimension.End.Column;
+                        workSheet.Cells[currentRowIndex, 1, currentRowIndex, lastColumn].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        workSheet.Cells[currentRowIndex, 1, currentRowIndex, lastColumn].Style.Fill.BackgroundColor.SetColor(Color.DeepSkyBlue);
+
+                        continue;
+                    }
 
                     using (ExcelPackage packageFrom = new ExcelPackage(new FileInfo(row.Filename)))
                     {

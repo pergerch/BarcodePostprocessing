@@ -2,7 +2,7 @@
 {
     public class ExcelRowToCompare
     {
-        public string Barcode { get; set; }
+        public string InternalCode { get; set; }
 
         public int? Count { get; set; }
 
