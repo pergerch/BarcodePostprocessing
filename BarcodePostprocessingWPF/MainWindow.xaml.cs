@@ -1,7 +1,6 @@
 ﻿namespace BarcodePostprocessingWPF
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
@@ -38,13 +37,7 @@
                     this.viewModel.ComparedFiles.Add(fileName);
                 }
 
-                Dictionary<string, string> columns =
-                    ExcelHelper.ReadFirstRowFromExcelFile(this.viewModel.ComparedFiles.First());
-                this.viewModel.ComparedFileColumns.Clear();
-                foreach (KeyValuePair<string, string> column in columns ?? new Dictionary<string, string>())
-                {
-                    this.viewModel.ComparedFileColumns.Add(column);
-                }
+                UpdateComparedColumns();
             }
         }
 
@@ -59,13 +52,7 @@
                     this.viewModel.RawFiles.Add(fileName);
                 }
 
-                Dictionary<string, string> columns =
-                    ExcelHelper.ReadFirstRowFromExcelFile(this.viewModel.RawFiles.First());
-                this.viewModel.RawFileColumns.Clear();
-                foreach (KeyValuePair<string, string> column in columns ?? new Dictionary<string, string>())
-                {
-                    this.viewModel.RawFileColumns.Add(column);
-                }
+                UpdateRawColumns();
             }
         }
 
@@ -108,11 +95,29 @@
                 Helper.NumberFromExcelColumn(
                     ((KeyValuePair<string, string>)this.OfficialPriceColumnBox.SelectedItem).Key);
 
-            ExcelHelper.CompareSumWithOfficial(fileName, inventory, barcodeColumns, internalCodeColumn, countColumn, priceColumn,
-                this.OfficialFileSkipHeaderCheckbox.IsChecked);
+            ExcelHelper.CompareSumWithOfficial(fileName, inventory, barcodeColumns, internalCodeColumn, countColumn,
+                priceColumn, this.OfficialFileSkipHeaderCheckbox.IsChecked);
 
             MessageBox.Show(FindResource("ComparisonDoneText").ToString(),
                 FindResource("ComparisonDoneCaption").ToString(), MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void BtnRemoveComparedDataFiles_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (this.LstComparedDataFiles.SelectedValue != null)
+            {
+                this.viewModel.ComparedFiles.Remove(this.LstComparedDataFiles.SelectedValue.ToString());
+                UpdateComparedColumns();
+            }
+        }
+
+        private void BtnRemoveRawDataFiles_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (this.LstRawFiles.SelectedValue != null)
+            {
+                this.viewModel.RawFiles.Remove(this.LstRawFiles.SelectedValue.ToString());
+                UpdateRawColumns();
+            }
         }
 
         private void BtnSumCompareFiles_OnClick(object sender, RoutedEventArgs e)
@@ -149,7 +154,9 @@
 
             if (allItems.Count > 0)
             {
-                ExcelHelper.WriteComparedSumsToExcelFile(fileName, allItems, "Summed");
+                List<ResultRow> resultRows = ExcelHelper.WriteComparedSumsToExcelFile(allItems);
+
+                ExcelHelper.CopyResultRows(fileName, "Summed", resultRows);
 
                 MessageBox.Show(FindResource("SumDoneCaption").ToString(), FindResource("SumDoneText").ToString(),
                     MessageBoxButton.OK, MessageBoxImage.Information);
@@ -180,8 +187,7 @@
             }
 
             int barcodeColumn =
-                Helper.NumberFromExcelColumn(
-                    ((KeyValuePair<string, string>)this.RawBarcodeColumnBox.SelectedItem).Key);
+                Helper.NumberFromExcelColumn(((KeyValuePair<string, string>)this.RawBarcodeColumnBox.SelectedItem).Key);
             int internalCodeColumn =
                 Helper.NumberFromExcelColumn(
                     ((KeyValuePair<string, string>)this.RawInternalCodeColumnBox.SelectedItem).Key);
@@ -296,6 +302,44 @@
         private void StatusButtonCopyright_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             Process.Start("https://spatial-focus.net");
+        }
+
+        private void UpdateComparedColumns()
+        {
+            string firstFile = this.viewModel.ComparedFiles.FirstOrDefault();
+
+            if (firstFile != null)
+            {
+                Dictionary<string, string> columns = ExcelHelper.ReadFirstRowFromExcelFile(firstFile);
+                this.viewModel.ComparedFileColumns.Clear();
+                foreach (KeyValuePair<string, string> column in columns ?? new Dictionary<string, string>())
+                {
+                    this.viewModel.ComparedFileColumns.Add(column);
+                }
+            }
+            else
+            {
+                this.viewModel.ComparedFileColumns.Clear();
+            }
+        }
+
+        private void UpdateRawColumns()
+        {
+            string firstFile = this.viewModel.RawFiles.FirstOrDefault();
+
+            if (firstFile != null)
+            {
+                Dictionary<string, string> columns = ExcelHelper.ReadFirstRowFromExcelFile(firstFile);
+                this.viewModel.RawFileColumns.Clear();
+                foreach (KeyValuePair<string, string> column in columns ?? new Dictionary<string, string>())
+                {
+                    this.viewModel.RawFileColumns.Add(column);
+                }
+            }
+            else
+            {
+                this.viewModel.RawFileColumns.Clear();
+            }
         }
     }
 }

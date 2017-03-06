@@ -7,11 +7,11 @@
 
     public class Inventory
     {
-        public Tuple<string, string, int>[] Array
+        public Tuple<string, string, double>[] Array
             =>
                 InventoryItems.OrderBy(x => x.InternalCode)
                     .ThenBy(x => x.Barcode)
-                    .Select(x => new Tuple<string, string, int>(x.Barcode, x.InternalCode, x.Count))
+                    .Select(x => new Tuple<string, string, double>(x.Barcode, x.InternalCode, x.Count))
                     .ToArray();
 
         public int Count => InventoryItems.Count;
@@ -20,7 +20,7 @@
 
         private ICollection<InventoryItem> InventoryItems { get; } = new List<InventoryItem>();
 
-        public void AddBarcodeCount(string barcode, int count)
+        public void AddBarcodeCount(string barcode, double count)
         {
             InventoryItem item = InventoryItems.FirstOrDefault(x => x.Barcode == barcode);
 
@@ -34,7 +34,7 @@
             }
         }
 
-        public void AddInternalCodeCount(string internalCode, int count)
+        public void AddInternalCodeCount(string internalCode, double count)
         {
             InventoryItem item = InventoryItems.FirstOrDefault(x => x.InternalCode == internalCode);
 
@@ -48,9 +48,9 @@
             }
         }
 
-        public int GetMatches(List<string> barcodes, string internalCode, int num)
+        public double GetMatches(List<string> barcodes, string internalCode, double num)
         {
-            int matches = 0;
+            double matches = 0;
 
             InventoryItem internalCodeItem = InventoryItems.FirstOrDefault(x => x.InternalCode == internalCode);
             if (internalCodeItem != null)

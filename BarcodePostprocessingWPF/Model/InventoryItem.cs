@@ -6,7 +6,7 @@
     {
         public string Barcode { get; set; }
 
-        public int Count { get; set; }
+        public double Count { get; set; }
 
         public string InternalCode { get; set; }
     }
