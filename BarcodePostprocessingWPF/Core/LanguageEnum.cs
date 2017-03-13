@@ -1,11 +1,11 @@
 ﻿namespace BarcodePostprocessingWPF.Core
 {
-    public enum LanguageEnum
-    {
-        English = 1,
+	public enum LanguageEnum
+	{
+		English = 1,
 
-        Bulgarian,
+		Bulgarian,
 
-        German
-    }
+		German
+	}
 }

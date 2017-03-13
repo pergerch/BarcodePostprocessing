@@ -283,7 +283,7 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Label Name="StatusBarText0" Grid.Column="0" HorizontalAlignment="Left">Ready</Label>
-                    <Label Name="StatusBarText1" Grid.Column="1" HorizontalAlignment="Center">06.03.2017</Label>
+                    <Label Name="StatusBarText1" Grid.Column="1" HorizontalAlignment="Center">13.03.2017</Label>
                     <Label Grid.Column="2" HorizontalAlignment="Right" Name="StatusButtonCopyright"
                             MouseDoubleClick="StatusButtonCopyright_OnMouseDoubleClick" Foreground="#FF3333FF">
                         (c) Christoph, 2017

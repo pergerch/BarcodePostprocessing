@@ -1,13 +1,13 @@
 ﻿namespace BarcodePostprocessingWPF.Model
 {
-    // TODO: Refactor to interface/base class with two implementation types BarcodeItem, InternalCodeItem
-    // Then use .OfType in LINQ statements
-    public class InventoryItem
-    {
-        public string Barcode { get; set; }
+	// TODO: Refactor to interface/base class with two implementation types BarcodeItem, InternalCodeItem
+	// Then use .OfType in LINQ statements
+	public class InventoryItem
+	{
+		public string Barcode { get; set; }
 
-        public double Count { get; set; }
+		public double Count { get; set; }
 
-        public string InternalCode { get; set; }
-    }
+		public string InternalCode { get; set; }
+	}
 }
